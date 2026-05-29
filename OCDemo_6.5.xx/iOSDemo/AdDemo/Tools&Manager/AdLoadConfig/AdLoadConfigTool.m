@@ -84,7 +84,7 @@
     }
     
     UIImage * appLaunchBGImg = [UIImage imageNamed:@"填入您的背景图片"];
-    [config setValue:appLaunchBGImg forKey:@"kATGDTSplashBackgroundImageKey"];
+    [config setValue:appLaunchBGImg forKey:kATSplashExtraBackgroundImageKey];
     
     //选择广告加载时的背景，建议符合应用本身的背景颜色
     UIColor * appLaunchBGColor = [UIColor whiteColor];
