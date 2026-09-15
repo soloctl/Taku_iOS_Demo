@@ -8,6 +8,7 @@
 #import "FeedSelfRenderVC.h"
  
 #import <MJRefresh/MJRefresh.h>
+#import "AdSDKManager.h"
 #import "SelfRenderView.h"
 #import "DemoOfferAdModel.h"
 #import "AdCell.h"
@@ -383,16 +384,24 @@
 #pragma mark - TableView Data Refresh
 - (void)footerRefresh {
     self.feedTableView.mj_footer = [MJRefreshAutoNormalFooter footerWithRefreshingTarget:self refreshingAction:@selector(upFreshLoadMoreData)];
-    [self.feedTableView.mj_footer beginRefreshing];
 }
 
 /// 加载更多
 - (void)upFreshLoadMoreData {
     [self loadNativeAd];
 }
+
+- (void)loadAd {
+    [self.feedTableView.mj_footer beginRefreshing];
+}
  
 /// 加载广告
 - (void)loadNativeAd {
+    if ([[AdSDKManager sharedManager] deferAdLoadingUntilSDKReady:^{
+        [self loadNativeAd];
+    }]) {
+        return;
+    }
     NSMutableDictionary * loadConfigDict = [NSMutableDictionary dictionary];
     
     //设置请求广告的尺寸
@@ -441,9 +450,16 @@
     [self.view addSubview:self.feedTableView];
     [self.feedTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.nbar.mas_bottom);
-        make.left.right.bottom.equalTo(self.view);
+        make.left.right.equalTo(self.view);
+        make.bottom.equalTo(self.footView.mas_top);
     }];
     [self footerRefresh];
+
+    self.footView.showBtn.hidden = YES;
+    self.footView.logBtn.hidden = YES;
+    [self.footView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(kAdaptH(140, 140));
+    }];
 }
  
 @end

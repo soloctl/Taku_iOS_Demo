@@ -9,6 +9,7 @@
 #import "TwoButtonAlertView.h"
 #import "BaseTabBarController.h"
 #import "BannerVC.h"
+#import "AdSDKManager.h"
 
 @interface BaseVC ()
 
@@ -178,6 +179,11 @@
     @WeakObj(self)
     [self.footView setClickLoadBlock:^{
         @StrongObj(self);
+        if ([[AdSDKManager sharedManager] deferAdLoadingUntilSDKReady:^{
+            [self loadAd];
+        }]) {
+            return;
+        }
         [self loadAd];
     }];
     [self.footView setClickShowBlock:^{

@@ -25,6 +25,10 @@ typedef void (^AdManagerInitFinishBlock)(void);
 
 @interface AdSDKManager : NSObject
 
+@property (nonatomic, readonly) BOOL isInitialized;
+
+@property (nonatomic, readonly) BOOL isSDKStarted;
+
 + (instancetype)sharedManager;
  
 /// 应用若在欧盟地区发行，使用本方法初始化
@@ -32,6 +36,8 @@ typedef void (^AdManagerInitFinishBlock)(void);
 
 /// 初始化SDK
 - (void)initSDK;
+
+- (BOOL)deferAdLoadingUntilSDKReady:(void(^)(void))retryBlock;
 
 #pragma mark - 开屏广告相关
 

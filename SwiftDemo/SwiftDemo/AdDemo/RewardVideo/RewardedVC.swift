@@ -133,6 +133,11 @@ extension RewardedVC: ATRewardedVideoDelegate {
         ATDemoLog("rewardedVideoDidRewardSuccessForPlacemenID:%@ extra:%@", placementID, extra)
         showLog(String(format: "rewardedVideoDidRewardSuccess:%@", placementID))
     }
+
+    func onRewardedSuccessRetry(forPlacemenID placementID: String, extra: [AnyHashable : Any]?) {
+        ATDemoLog("onRewardedSuccessRetryForPlacemenID:%@ extra:%@", placementID, extra ?? [:])
+        showLog(String(format: "onRewardedSuccessRetry:%@", placementID))
+    }
     
     /// Rewarded video started playing
     /// - Parameters:

@@ -31,13 +31,6 @@
 //场景ID，可选，可在后台生成。没有可传入空字符串
 #define SplashSceneID @""
  
-- (void)viewDidLoad {
-    [super viewDidLoad];
- 
-    //为了加快开屏广告效率，建议在进入当前页面之前发起开屏广告加载请求，例如初始化SDK之后，demo此处为了方便演示，在viewDidLoad进入时请求
-    [self loadAd];
-}
-
 /// 进入首页
 - (void)enterHomeVC {
     //广告超时或展示完毕关闭时，执行这里
@@ -94,7 +87,7 @@
 }
  
 #pragma mark - Show Ad 展示广告
-- (void)showSplash {
+- (void)showAd {
     
     //场景统计功能，可选接入
     [[ATAdManager sharedManager] entrySplashScenarioWithPlacementID:SplashPlacementID scene:SplashSceneID];
@@ -139,7 +132,7 @@
     ATDemoLog(@"开屏加载成功:%@----是否超时:%d",placementID,isTimeout);
     if (!isTimeout) {
         //没有超时，展示开屏广告
-        [self showSplash];
+        [self showAd];
     }else {
         //加载成功，但超时了
         [self enterHomeVC];

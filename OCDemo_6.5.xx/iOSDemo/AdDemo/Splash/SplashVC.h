@@ -5,8 +5,8 @@
 //  Created by ltz on 2025/1/18.
 //
 
-#import "BaseNormalBarNoFootVC.h"
+#import "BaseNormalBarVC.h"
  
-@interface SplashVC : BaseNormalBarNoFootVC
+@interface SplashVC : BaseNormalBarVC
 
 @end

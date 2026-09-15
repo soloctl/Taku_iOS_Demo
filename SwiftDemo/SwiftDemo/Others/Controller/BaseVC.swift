@@ -99,7 +99,13 @@ class BaseVC: UIViewController {
         }
         
         footView.clickLoadBlock = { [weak self] in
-            self?.loadAd()
+            guard let self = self else { return }
+            if AdSDKManager.shared.deferAdLoadingUntilSDKReady({ [weak self] in
+                self?.loadAd()
+            }) {
+                return
+            }
+            self.loadAd()
         }
         
         footView.clickShowBlock = { [weak self] in

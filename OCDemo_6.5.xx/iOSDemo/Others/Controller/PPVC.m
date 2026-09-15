@@ -8,6 +8,7 @@
 
 #import "PPVC.h"
 #import <AnyThinkSDK/AnyThinkSDK.h>
+#import "AdSDKManager.h"
 
 typedef NS_ENUM(NSInteger, PPVCDisplayMode) {
     PPVCDisplayModeList,        // 显示选项列表
@@ -39,20 +40,11 @@ typedef NS_ENUM(NSInteger, PPVCDisplayMode) {
 
 + (void)showSDKManagementWithAgreementCallback:(void(^)(void))agreementCallback {
     
-    // 访问苹果开发者官网，触发网络授权弹窗
-    [[[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:@"https://developer.apple.com"] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        // 无需处理返回结果
-    }] resume];
-    
     // 检查是否为首次启动
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     BOOL hasShownSDKManagement = [userDefaults boolForKey:@"HasShownSDKManagement"];
     
     if (hasShownSDKManagement) {
-        // 非首次启动，直接执行回调
-        if (agreementCallback) {
-            agreementCallback();
-        }
         return;
     }
     
@@ -383,7 +375,9 @@ typedef NS_ENUM(NSInteger, PPVCDisplayMode) {
     [userDefaults setBool:self.isPersonalizedAdEnabled forKey:@"IsPersonalizedAdEnabled"];
     [userDefaults synchronize];
     
-    [[ATAPI sharedInstance] setPersonalizedAdState:self.isPersonalizedAdEnabled?ATPersonalizedAdStateType:ATNonpersonalizedAdStateType];
+    if ([AdSDKManager sharedManager].isSDKStarted) {
+        [[ATAPI sharedInstance] setPersonalizedAdState:self.isPersonalizedAdEnabled?ATPersonalizedAdStateType:ATNonpersonalizedAdStateType];
+    }
 
     // 更新对应cell的副标题文本
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:0]];
@@ -399,6 +393,8 @@ typedef NS_ENUM(NSInteger, PPVCDisplayMode) {
     [userDefaults synchronize];
     
     self.isSDKInitialized = YES;
+    
+    [[AdSDKManager sharedManager] initSDK];
     
     // 显示初始化成功提示，然后返回SDK管理页面
     [self showAlert:@"初始化成功" message:@"SDK初始化完成，现在可以展示广告了" completion:^{

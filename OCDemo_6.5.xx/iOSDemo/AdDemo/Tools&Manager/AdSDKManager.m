@@ -15,6 +15,9 @@
 static AdSDKManager *sharedManager = nil;
 
 @interface AdSDKManager() <ATAdLoadingDelegate, ATSplashDelegate>
+
+@property (nonatomic, assign) BOOL isInitialized;
+@property (nonatomic, assign) BOOL isSDKStarted;
  
 @end
 
@@ -55,7 +58,21 @@ static AdSDKManager *sharedManager = nil;
  
 /// 初始化SDK，此方法不会同时初始化广告平台SDK
 - (void)initSDK {
-    
+    if (self.isInitialized) {
+        return;
+    }
+
+    [ATAPI sharedInstance];
+
+    self.isInitialized = YES;
+}
+
+- (void)startSDKWithCompletion:(void(^)(BOOL success))completion {
+    if (self.isSDKStarted) {
+        if (completion) { completion(YES); }
+        return;
+    }
+
     // 日志开关
     [ATAPI setLogEnabled:YES];
     // 检测集成
@@ -82,18 +99,67 @@ static AdSDKManager *sharedManager = nil;
     //调试模式相关工具 TestModeTool
 //    [TestModeTool showDebugUI:]
     
+    BOOL personalizedAdEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:@"IsPersonalizedAdEnabled"];
+    [[ATAPI sharedInstance] setPersonalizedAdState:personalizedAdEnabled ? ATPersonalizedAdStateType : ATNonpersonalizedAdStateType];
+
     //初始化SDK
     NSError * initError = nil;
-    [[ATAPI sharedInstance] startWithAppID:kTakuAppID appKey:kTakuAppKey error:&initError];
+    BOOL success = [[ATAPI sharedInstance] startWithAppID:kTakuAppID appKey:kTakuAppKey error:&initError];
     if (initError) {
         //初始化失败
         NSLog(@"init failed : %@",initError);
     }
+    [self handleStartResult:success completion:completion];
+}
+
+- (BOOL)deferAdLoadingUntilSDKReady:(void(^)(void))retryBlock {
+    if (self.isSDKStarted) {
+        return NO;
+    }
+
+    [self initSDK];
+
+    void (^startAndRetry)(void) = ^{
+        [self startSDKWithCompletion:^(BOOL success) {
+            NSLog(@"SDK started before ad loading: %@", success ? @"YES" : @"NO");
+            if (success && retryBlock) { retryBlock(); }
+        }];
+    };
+
+    if (@available(iOS 14, *)) {
+        if ([ATTrackingManager trackingAuthorizationStatus] == ATTrackingManagerAuthorizationStatusNotDetermined
+            && [UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+                NSLog(@"ATT authorization status: %lu", (unsigned long)status);
+                dispatch_async(dispatch_get_main_queue(), startAndRetry);
+            }];
+            return YES;
+        }
+    }
+
+    startAndRetry();
+    return YES;
+}
+
+- (void)handleStartResult:(BOOL)success completion:(void(^)(BOOL success))completion {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.isSDKStarted = success;
+        if (completion) { completion(success); }
+    });
 }
  
 #pragma mark - 开屏广告相关
 
 - (void)startSplashAd {
+    if ([self deferAdLoadingUntilSDKReady:^{
+        [self doStartSplashAd];
+    }]) {
+        return;
+    }
+    [self doStartSplashAd];
+}
+
+- (void)doStartSplashAd {
     //开屏广告展示启动图
     [self addLaunchLoadingView];
     
@@ -263,7 +329,6 @@ static AdSDKManager *sharedManager = nil;
 - (void)splashDidShowForPlacementID:(nonnull NSString *)placementID extra:(nonnull NSDictionary *)extra {
     [[LaunchLoadingView sharedInstance] dismiss];
 }
-
 
 #pragma mark - life
 - (void)dealloc {

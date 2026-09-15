@@ -21,8 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
         setupDemoUI()
          
-        // Initialize SDK.
-        AdSDKManager.shared.initSDK()
+        PPVC.showSDKManagement()
  
         //For apps published in non-EU regions, use this method to initialize SDK integration. For EU region initialization, replace with AdSDKManager.shared.initSDK_EU
 //        AdSDKManager.shared.initSDK_EU {

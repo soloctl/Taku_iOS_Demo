@@ -50,19 +50,6 @@
 }
 
 #pragma mark - lifecycle
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        if (@available(iOS 14, *)) {
-            //申请ATT权限 - 注意！若使用含欧盟地区初始化流程，请在initSDK_EU方法中调用申请ATT权限
-            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-                
-            }];
-        } else {
-            // Fallback on earlier versions
-        }
-    });
-}
   
 #pragma mark - Demo UI 可忽略
 - (void)setupDemoUI {

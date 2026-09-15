@@ -8,7 +8,7 @@
 import UIKit
 import AnyThinkSDK
 
-class SplashVC: BaseNormalBarNoFootVC {
+class SplashVC: BaseNormalBarVC {
     
     // MARK: - Properties
  
@@ -21,13 +21,6 @@ class SplashVC: BaseNormalBarNoFootVC {
     private let splashSceneID = ""
     
     // MARK: - Lifecycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
- 
-        // To improve splash ad efficiency, it's recommended to initiate splash ad loading request before entering current page, for example after SDK initialization. Demo here loads in viewDidLoad for convenience
-        loadAd()
-    }
     
     // MARK: - Navigation
     
@@ -88,7 +81,7 @@ class SplashVC: BaseNormalBarNoFootVC {
     // MARK: - Show Ad
     
     /// Show splash ad
-    private func showSplash() {
+    override func showAd() {
         // Scene statistics function (optional integration)
         ATAdManager.shared().entrySplashScenario(withPlacementID: splashPlacementID, scene: splashSceneID)
         
@@ -132,7 +125,7 @@ extension SplashVC: ATSplashDelegate {
         if !isTimeout {
             // No timeout, show splash ad
             // 没超时，可以展示广告
-            showSplash()
+            showAd()
         } else {
             // Loading successful, but timeout occurred
             // 加载成功超时了，直接进入首页

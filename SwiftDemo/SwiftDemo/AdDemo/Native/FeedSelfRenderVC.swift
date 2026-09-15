@@ -55,21 +55,31 @@ class FeedSelfRenderVC: BaseNormalBarVC {
  
         feedTableView.snp.makeConstraints { make in
             make.top.equalTo(self.nbar!.snp.bottom)
-            make.left.right.bottom.equalTo(view)
+            make.left.right.equalTo(view)
+            make.bottom.equalTo(footView.snp.top)
         }
          
         footerRefresh()
+
+        footView.showBtn.isHidden = true
+        footView.logBtn.isHidden = true
+        footView.snp.updateConstraints { make in
+            make.height.equalTo(kAdaptH(140, 140))
+        }
     }
     
     // MARK: - TableView Refresh
     private func footerRefresh() {
         let footer = MJRefreshAutoNormalFooter(refreshingTarget: self, refreshingAction: #selector(upFreshLoadMoreData))
         feedTableView.mj_footer = footer
-        feedTableView.mj_footer?.beginRefreshing()
     }
     
     @objc private func upFreshLoadMoreData() {
         loadNativeAd()
+    }
+
+    override func loadAd() {
+        feedTableView.mj_footer?.beginRefreshing()
     }
     
     // MARK: - Data Handling
@@ -129,6 +139,12 @@ class FeedSelfRenderVC: BaseNormalBarVC {
     
     // MARK: - Ad Loading and Rendering
     private func loadNativeAd() {
+        if AdSDKManager.shared.deferAdLoadingUntilSDKReady({ [weak self] in
+            self?.loadNativeAd()
+        }) {
+            return
+        }
+
         var loadConfigDict: [String: Any] = [:]
         
         // Set ad request size

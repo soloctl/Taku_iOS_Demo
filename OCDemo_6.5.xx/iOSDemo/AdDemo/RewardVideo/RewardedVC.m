@@ -134,6 +134,11 @@
     
 }
 
+- (void)onRewardedSuccessRetryForPlacemenID:(NSString *)placementID extra:(NSDictionary *)extra {
+    ATDemoLog(@"onRewardedSuccessRetryForPlacemenID:%@ extra:%@", placementID, extra);
+    [self showLog:[NSString stringWithFormat:@"onRewardedSuccessRetry:%@", placementID]];
+}
+
 /// 激励广告视频开始播放
 /// - Parameters:
 ///   - placementID: 广告位ID

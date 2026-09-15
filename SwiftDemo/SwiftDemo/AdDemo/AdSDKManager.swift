@@ -36,9 +36,65 @@ class AdSDKManager: NSObject {
         super.init()
     }
     
+    private(set) var isInitialized = false
+
+    private(set) var isSDKStarted = false
+
     // MARK: - Public Methods
     /// Initialize SDK, this method will not initialize ad platform SDKs simultaneously
     func initSDK() {
+        if isInitialized {
+            return
+        }
+
+        _ = ATAPI.sharedInstance()
+
+        isInitialized = true
+    }
+
+    func applyPersonalizedAdState(_ enabled: Bool) {
+        guard isSDKStarted else { return }
+        if let state = ATPersonalizedAdState(rawValue: enabled ? 1 : 2) {
+            ATAPI.sharedInstance().setPersonalizedAdState(state)
+        }
+    }
+
+    @discardableResult
+    func deferAdLoadingUntilSDKReady(_ retryBlock: (() -> Void)?) -> Bool {
+        if isSDKStarted {
+            return false
+        }
+
+        initSDK()
+
+        let startAndRetry = {
+            self.startSDK { success in
+                NSLog("SDK started before ad loading: \(success)")
+                if success { retryBlock?() }
+            }
+        }
+
+        if #available(iOS 14, *) {
+            if ATTrackingManager.trackingAuthorizationStatus == .notDetermined
+                && UIApplication.shared.applicationState == .active {
+                ATTrackingManager.requestTrackingAuthorization { status in
+                    NSLog("ATT authorization status: \(status.rawValue)")
+                    DispatchQueue.main.async(execute: startAndRetry)
+                }
+                return true
+            }
+        }
+
+        startAndRetry()
+        return true
+    }
+
+    private func startSDK(completion: ((Bool) -> Void)?) {
+        if isSDKStarted {
+            completion?(true)
+            return
+        }
+
         // Log switch
         ATAPI.setLogEnabled(true)
         // Integration detection
@@ -70,11 +126,24 @@ class AdSDKManager: NSObject {
         // Debug mode related tools TestModeTool
         // TestModeTool.showDebugUI()
         
+        if let state = ATPersonalizedAdState(rawValue: UserDefaults.standard.bool(forKey: "IsPersonalizedAdEnabled") ? 1 : 2) {
+            ATAPI.sharedInstance().setPersonalizedAdState(state)
+        }
+
         // Initialize SDK
         do {
             try ATAPI.sharedInstance().start(withAppID: kAppID, appKey: kAppKey)
+            handleStartResult(true, completion: completion)
         } catch {
             print("AdSDK init error: \(error)")
+            handleStartResult(false, completion: completion)
+        }
+    }
+
+    private func handleStartResult(_ success: Bool, completion: ((Bool) -> Void)?) {
+        DispatchQueue.main.async {
+            self.isSDKStarted = success
+            completion?(success)
         }
     }
     
