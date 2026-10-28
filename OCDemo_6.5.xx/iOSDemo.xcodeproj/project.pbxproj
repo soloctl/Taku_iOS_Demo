@@ -723,13 +723,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOSDemo/Pods-iOSDemo-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOSDemo/Pods-iOSDemo-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -766,13 +762,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOSDemo/Pods-iOSDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-iOSDemo/Pods-iOSDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -815,19 +807,6 @@
 				898A0EC12D2C183100EF5B72 /* DemoADFootView.m in Sources */,
 				89255FB82D2AE22700995FDE /* NaviBarView.m in Sources */,
 				899E18A52D2D6F5B005394C9 /* TwoButtonAlertView.m in Sources */,
-				CA3003DB2E82B61A00182736 /* DemoCustomSplashAdapter.m in Sources */,
-				CA3003DC2E82B61A00182736 /* DemoCustomNativeDelegate.m in Sources */,
-				CA3003DD2E82B61A00182736 /* DemoCustomInitAdapter.m in Sources */,
-				CA3003DE2E82B61A00182736 /* DemoCustomBannerDelegate.m in Sources */,
-				CA3003DF2E82B61A00182736 /* DemoCustomInterstitialAdapter.m in Sources */,
-				CA3003E02E82B61A00182736 /* DemoCustomBaseAdapter.m in Sources */,
-				CA3003E12E82B61A00182736 /* DemoCustomSplashDelegate.m in Sources */,
-				CA3003E22E82B61A00182736 /* DemoCustomRewardVideoAdapter.m in Sources */,
-				CA3003E32E82B61A00182736 /* DemoCustomBannerAdapter.m in Sources */,
-				CA3003E42E82B61A00182736 /* DemoCustomNativeAdapter.m in Sources */,
-				CA3003E52E82B61A00182736 /* DemoCustomNativeObject.m in Sources */,
-				CA3003E62E82B61A00182736 /* DemoCustomInterstitialDelegate.m in Sources */,
-				CA3003E72E82B61A00182736 /* DemoCustomRewardVideoDelegate.m in Sources */,
 				CACC65D32D93C95B00958DAE /* AdSDKManager.m in Sources */,
 				CA5AF6192D57601500D48D26 /* FeedTemplateVC.m in Sources */,
 				899E18AA2D2D78B3005394C9 /* NormalNavBar.m in Sources */,

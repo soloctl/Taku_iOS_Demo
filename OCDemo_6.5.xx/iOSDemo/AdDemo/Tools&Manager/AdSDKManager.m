@@ -11,6 +11,7 @@
 #import "AdLoadConfigTool.h"
 #import "SDKGlobalConfigTool.h"
 #import "TestModeTool.h"
+#import "SplashVC.h"
  
 static AdSDKManager *sharedManager = nil;
 
@@ -96,6 +97,8 @@ static AdSDKManager *sharedManager = nil;
 - (void)startSplashAd {
     //开屏广告展示启动图
     [self addLaunchLoadingView];
+
+    [SplashVC compatProbeSendSplashBidLoss];
     
     [self loadSplashWithPlacementID:FirstAppOpen_PlacementID];
 }

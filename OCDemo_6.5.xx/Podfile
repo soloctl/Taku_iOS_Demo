@@ -1,10 +1,10 @@
-#建议使用github源，pod install前请检查终端代理网络是否通畅(可能需要通过代码给终端设置代理，否则终端不会走代理服务，具体请检查您的代理服务流量变化)，如遇失败可尝试使用pod install --repo-update命令
+# Recommend GitHub source; skip --repo-update unless a spec is missing.
 source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '13.0'
 
-# Adapter 6.5.90.2.1 pins SmartdigimktCNSDK = 6.5.90. After pod install, replace that
-# official binary with the Beilehu custom 6.5.66 package for compatibility testing.
+# Adapter 6.5.66.2.0 pins SmartdigimktCNSDK = 6.5.66. After pod install, replace the
+# official 66 binary with the Beilehu custom 6.5.66 package.
 BEILEHU_SDM = '/Users/taku-0093/Documents/issue/20261028_贝乐虎_66定制包与聚合84兼容性测试/KuYingSDK'
 
 post_install do |installer|
@@ -29,16 +29,9 @@ target 'iOSDemo' do
   
     # Taku SDK
     pod 'AnyThinkiOS','6.5.84'
-    # AnyThink Kuying ADX adapter (pins official SmartdigimktCNSDK = 6.5.90)
-    pod 'AnyThinkMediationAdxSmartdigimktCNAdapter','6.5.90.2.1'
+    # AnyThink Kuying ADX adapter (pins official SmartdigimktCNSDK = 6.5.66)
+    pod 'AnyThinkMediationAdxSmartdigimktCNAdapter','6.5.66.2.0'
     
-    #Baidu--4.80 SDK,podfile文件顶部增加 source 'https://github.com/CocoaPods/Specs.git'
-    pod 'AnyThinkMediationBaiduAdapter','10.022.0'
-    pod 'AnyThinkMediationMSAdapter','2.7.13.0.0'
-    pod 'AnyThinkMediationKuaiShouAdapter','4.12.20.1.0'
-    pod 'AnyThinkMediationAdmobAdapter','12.14.0.0'
-    pod 'AnyThinkMediationGDTAdapter','4.15.70.0'
- 
     pod 'AnyThinkDebugUISDK','1.0.7'
  
   #第三方数据统计SDK

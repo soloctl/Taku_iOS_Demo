@@ -8,6 +8,7 @@
 #import "SplashVC.h"
 
 #import <AnyThinkSDK/AnyThinkSDK.h>
+#import <SmartdigimktSDK/SmartdigimktSDK.h>
 
 #import "AdLoadConfigTool.h"
 
@@ -44,8 +45,23 @@
 }
 
 #pragma mark - Load Ad 加载广告
++ (void)compatProbeSendSplashBidLoss {
+    // Mirror 6.5.66.2.0 adapter sendLoss: networkName / winPrice / extraInfo, no seatId.
+    ATDemoLog(@"compat probe: splash sendLoss begin (66 adapter path)");
+    SDMSplashAd *splashAd = [[SDMSplashAd alloc] initAdWithPlacementId:SplashPlacementID extra:nil];
+    SDMLossInfo *info = [[SDMLossInfo alloc] init];
+    info.networkName = @"BeilehuCompatTestADN";
+    info.winPrice = 1.23;
+    info.currencyType = SDMAdCurrencyTypeUSD;
+    info.extraInfo = @{@"loss_reason": @"low_price"};
+    ATDemoLog(@"compat probe: before notifyLoss");
+    [splashAd notifyLoss:info];
+    ATDemoLog(@"compat probe: after notifyLoss, no crash");
+}
+
 /// 加载广告
 - (void)loadAd {
+    [SplashVC compatProbeSendSplashBidLoss];
     
     NSMutableDictionary *loadConfigDict = [NSMutableDictionary dictionary];
     
