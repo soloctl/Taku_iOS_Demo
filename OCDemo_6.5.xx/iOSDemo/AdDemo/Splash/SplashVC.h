@@ -9,7 +9,4 @@
  
 @interface SplashVC : BaseNormalBarNoFootVC
 
-/// Fire the 90-adapter splash sendLoss path against the bundled SDM binary.
-+ (void)compatProbeSendSplashBidLoss;
-
 @end

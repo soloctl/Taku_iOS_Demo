@@ -8,6 +8,7 @@
 #import "RewardedVC.h"
 #import <AnyThinkSDK/AnyThinkSDK.h>
 #import "AdLoadConfigTool.h"
+#import "AdSDKManager.h"
 
 @interface RewardedVC () <ATRewardedVideoDelegate>
 
@@ -18,7 +19,7 @@
 @implementation RewardedVC
 
 //广告位ID
-#define RewardedPlacementID @"b67f4ab93eb3a7"
+#define RewardedPlacementID @"b5fa2500639c86"
  
 // Custom adapter test ID
 //#define RewardedPlacementID @"b687f26e050de2"
@@ -84,6 +85,7 @@
 /// 广告位加载完成
 /// - Parameter placementID: 广告位ID
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     BOOL isReady = [[ATAdManager sharedManager] rewardedVideoReadyForPlacementID:placementID];
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@ Rewarded 是否准备好:%@", placementID,isReady ? @"YES":@"NO"]];
     
@@ -96,6 +98,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     

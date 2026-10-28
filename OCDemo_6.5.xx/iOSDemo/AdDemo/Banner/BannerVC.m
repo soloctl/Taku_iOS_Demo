@@ -8,6 +8,7 @@
 #import "BannerVC.h"
 #import <AnyThinkSDK/AnyThinkSDK.h>
 #import "AdLoadConfigTool.h"
+#import "AdSDKManager.h"
 
 @interface BannerVC () <ATBannerDelegate>
 
@@ -19,7 +20,7 @@
 @implementation BannerVC
 
 //广告位ID
-#define BannerPlacementID @"b680a1e7874fce"
+#define BannerPlacementID @"b5fa24ff8a7446"
 
 // Custom adapter test ID
 //#define BannerPlacementID @"b687f2eed9d370"
@@ -131,6 +132,7 @@
 /// 广告位加载完成
 /// - Parameter placementID: 广告位ID
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     BOOL isReady = [[ATAdManager sharedManager] bannerAdReadyForPlacementID:placementID];
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@ Banner 是否准备好:%@", placementID,isReady ? @"YES":@"NO"]];
     
@@ -142,6 +144,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     

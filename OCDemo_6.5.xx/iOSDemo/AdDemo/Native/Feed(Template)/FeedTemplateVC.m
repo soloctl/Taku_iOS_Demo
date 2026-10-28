@@ -6,7 +6,8 @@
 //
 
 #import "FeedTemplateVC.h"
-#import <AnyThinkSDK/AnyThinkSDK.h> 
+#import <AnyThinkSDK/AnyThinkSDK.h>
+#import "AdSDKManager.h" 
 
 #import <MJRefresh/MJRefresh.h>
 #import "SelfRenderView.h"
@@ -28,7 +29,7 @@
 @implementation FeedTemplateVC
 
 //广告位ID
-#define Feed_Native_Express_PlacementID @"b680af4b2bb0a9"
+#define Feed_Native_Express_PlacementID @"b64e6fc9ceecdd"
 
 //场景ID，可选，可在后台生成。没有可传入空字符串
 #define Feed_Native_Express_SceneID @""
@@ -181,6 +182,7 @@
 /// 广告位加载完成
 /// - Parameter placementID: 广告位ID
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     BOOL isReady = [[ATAdManager sharedManager] nativeAdReadyForPlacementID:placementID];
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@ SelfRender 是否准备好:%@", placementID,isReady ? @"YES":@"NO"]];
     
@@ -195,6 +197,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     

@@ -8,9 +8,9 @@
 #import "SplashVC.h"
 
 #import <AnyThinkSDK/AnyThinkSDK.h>
-#import <SmartdigimktSDK/SmartdigimktSDK.h>
 
 #import "AdLoadConfigTool.h"
+#import "AdSDKManager.h"
 
 #import "AppDelegate.h"
 
@@ -24,7 +24,7 @@
 @implementation SplashVC
 
 //广告位ID
-#define SplashPlacementID @"b67f4ab43d2fe1"
+#define SplashPlacementID @"b5fa25036683d2"
 
 // Custom adapter test ID
 //#define SplashPlacementID @"b687deabac7988"
@@ -45,24 +45,8 @@
 }
 
 #pragma mark - Load Ad 加载广告
-+ (void)compatProbeSendSplashBidLoss {
-    // Mirror 6.5.66.2.0 adapter sendLoss: networkName / winPrice / extraInfo, no seatId.
-    ATDemoLog(@"compat probe: splash sendLoss begin (66 adapter path)");
-    SDMSplashAd *splashAd = [[SDMSplashAd alloc] initAdWithPlacementId:SplashPlacementID extra:nil];
-    SDMLossInfo *info = [[SDMLossInfo alloc] init];
-    info.networkName = @"BeilehuCompatTestADN";
-    info.winPrice = 1.23;
-    info.currencyType = SDMAdCurrencyTypeUSD;
-    info.extraInfo = @{@"loss_reason": @"low_price"};
-    ATDemoLog(@"compat probe: before notifyLoss");
-    [splashAd notifyLoss:info];
-    ATDemoLog(@"compat probe: after notifyLoss, no crash");
-}
-
 /// 加载广告
 - (void)loadAd {
-    [SplashVC compatProbeSendSplashBidLoss];
-    
     NSMutableDictionary *loadConfigDict = [NSMutableDictionary dictionary];
     
     //开屏超时时间
@@ -167,6 +151,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString*)placementID error:(NSError*)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     
@@ -177,6 +162,7 @@
 /// 开屏广告加载超时
 /// - Parameter placementID: 广告位ID
 - (void)didTimeoutLoadingSplashADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didTimeoutLoadingSplashADWithPlacementID:%@", placementID);
     //超时了，首页加载完成后进入首页
     [self showLog:[NSString stringWithFormat:@"开屏超时了"]];
@@ -196,6 +182,7 @@
 /// Callback when the successful loading of the ad
 /// 加载成功且加载流程完毕
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFinishLoadingADWithPlacementID:%@", placementID);
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@", placementID]];
 }

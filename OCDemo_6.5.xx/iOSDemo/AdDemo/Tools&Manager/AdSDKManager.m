@@ -7,11 +7,11 @@
 
 #import "AdSDKManager.h"
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
+#import <SmartdigimktSDK/SmartdigimktSDK.h>
 #import "LaunchLoadingView.h"
 #import "AdLoadConfigTool.h"
 #import "SDKGlobalConfigTool.h"
 #import "TestModeTool.h"
-#import "SplashVC.h"
  
 static AdSDKManager *sharedManager = nil;
 
@@ -90,6 +90,26 @@ static AdSDKManager *sharedManager = nil;
         //初始化失败
         NSLog(@"init failed : %@",initError);
     }
+
+    [SDMBaseAd generateHBParamWithExtraDic:nil format:SDMAdFormatSplash complete:^(NSDictionary *headerBiddingParams) {
+        NSLog(@"SDM C2S generateHBParam keys:%@ count:%lu", headerBiddingParams.allKeys, (unsigned long)headerBiddingParams.count);
+    }];
+}
+
++ (void)notifySDM66LossAfterLoad:(NSString *)placementID {
+    if (placementID.length == 0) {
+        return;
+    }
+    SDMBaseAd *ad = [[SDMBaseAd alloc] initAdWithPlacementId:placementID extra:nil];
+    SDMLossInfo *lossInfo = [[SDMLossInfo alloc] init];
+    lossInfo.reason = SDMLossToHigherBid;
+    lossInfo.winPrice = 1.23;
+    lossInfo.networkName = @"BidAPIProbeADN";
+    lossInfo.currencyType = SDMAdCurrencyTypeUSD;
+    lossInfo.extraInfo = @{@"loss_reason": @"low_price"};
+    NSLog(@"SDM C2S notifyLoss after load placement:%@ before", placementID);
+    [ad notifyLoss:lossInfo];
+    NSLog(@"SDM C2S notifyLoss after load placement:%@ after", placementID);
 }
  
 #pragma mark - 开屏广告相关
@@ -98,8 +118,6 @@ static AdSDKManager *sharedManager = nil;
     //开屏广告展示启动图
     [self addLaunchLoadingView];
 
-    [SplashVC compatProbeSendSplashBidLoss];
-    
     [self loadSplashWithPlacementID:FirstAppOpen_PlacementID];
 }
 
@@ -207,11 +225,13 @@ static AdSDKManager *sharedManager = nil;
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     //处理开屏回调
     [self showSplashOrEnterHomePageWithPlacementID:placementID loadResult:NO];
 }
 
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     // All Ads load finished, please use didFinishLoadingSplashADWithPlacementID:isTimeout first
 }
 
@@ -221,6 +241,7 @@ static AdSDKManager *sharedManager = nil;
 ///   - placementID: 广告位ID
 ///   - isTimeout: 是否超时
 - (void)didFinishLoadingSplashADWithPlacementID:(NSString *)placementID isTimeout:(BOOL)isTimeout {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     //处理开屏回调
     [self showSplashOrEnterHomePageWithPlacementID:placementID loadResult:!isTimeout];
 }
@@ -228,6 +249,7 @@ static AdSDKManager *sharedManager = nil;
 /// 开屏广告超时
 /// - Parameter placementID: 广告位ID
 - (void)didTimeoutLoadingSplashADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     //处理开屏回调
     [self showSplashOrEnterHomePageWithPlacementID:placementID loadResult:NO];
 }

@@ -8,6 +8,7 @@
 #import "ExpressVC.h"
 
 #import <AnyThinkSDK/AnyThinkSDK.h>
+#import "AdSDKManager.h"
  
 #import "AdDisplayVC.h"
 
@@ -25,7 +26,7 @@
 //广告位ID
 
 //模版渲染的广告位
-#define Native_Express_PlacementID @"b680af46e13e5c"
+#define Native_Express_PlacementID @"b64e6fc9ceecdd"
 
 // Custom adapter test ID
 //#define Native_Express_PlacementID @"b687f2efd5d11c"
@@ -144,6 +145,7 @@
 /// 广告位加载完成
 /// - Parameter placementID: 广告位ID
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     BOOL isReady = [[ATAdManager sharedManager] nativeAdReadyForPlacementID:placementID];
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@ Express 是否准备好:%@", placementID,isReady ? @"YES":@"NO"]];
     
@@ -156,6 +158,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     

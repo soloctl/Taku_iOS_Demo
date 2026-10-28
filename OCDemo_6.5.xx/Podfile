@@ -3,18 +3,9 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '13.0'
 
-# Adapter 6.5.66.2.0 pins SmartdigimktCNSDK = 6.5.66. After pod install, replace the
-# official 66 binary with the Beilehu custom 6.5.66 package.
-BEILEHU_SDM = '/Users/taku-0093/Documents/issue/20261028_贝乐虎_66定制包与聚合84兼容性测试/KuYingSDK'
+# Adapter 6.5.66.2.0 pins official SmartdigimktCNSDK = 6.5.66 (no Beilehu overlay).
 
 post_install do |installer|
-  require 'fileutils'
-  dest = File.join(__dir__, 'Pods/SmartdigimktCNSDK/KuYingSDK')
-  if File.directory?(BEILEHU_SDM) && File.directory?(File.dirname(dest))
-    FileUtils.rm_rf(dest)
-    FileUtils.cp_r(BEILEHU_SDM, dest)
-    puts "[Beilehu] Replaced Pods/SmartdigimktCNSDK/KuYingSDK with custom 6.5.66"
-  end
   installer.generated_projects.each do |project|
     project.targets.each do |target|
         target.build_configurations.each do |config|

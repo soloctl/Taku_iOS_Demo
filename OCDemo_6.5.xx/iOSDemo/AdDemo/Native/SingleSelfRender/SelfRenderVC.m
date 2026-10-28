@@ -9,6 +9,7 @@
 #import <AnyThinkSDK/AnyThinkSDK.h>
 
 #import "AdLoadConfigTool.h"
+#import "AdSDKManager.h"
 #import "SelfRenderView.h"
 #import "AdDisplayVC.h"
 
@@ -25,7 +26,7 @@
 @implementation SelfRenderVC
 
 //广告位ID
-#define Native_SelfRender_PlacementID @"b680af2c216f73"
+#define Native_SelfRender_PlacementID @"b5fa25023d0767"
 
 // Custom adapter test ID
 //#define Native_SelfRender_PlacementID @"b687f59e8358d0"
@@ -211,6 +212,7 @@
 /// 广告位加载完成
 /// - Parameter placementID: 广告位ID
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     BOOL isReady = [[ATAdManager sharedManager] nativeAdReadyForPlacementID:placementID];
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@ SelfRender 是否准备好:%@", placementID,isReady ? @"YES":@"NO"]];
     
@@ -223,6 +225,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     

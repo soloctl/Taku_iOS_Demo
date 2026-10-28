@@ -12,7 +12,7 @@
 typedef void (^AdManagerInitFinishBlock)(void);
 
 //在后台的应用ID
-#define kTakuAppID  @"a67f4ab312d2be"
+#define kTakuAppID  @"a5b0e8491845b3"
 
 //在后台的应用维度AppKey，或者是账号维度AppKey
 #define kTakuAppKey @"7eae0567827cfe2b22874061763f30c9"
@@ -21,7 +21,7 @@ typedef void (^AdManagerInitFinishBlock)(void);
 #define FirstAppOpen_Timeout 8
 
 //冷启动开屏广告位ID
-#define FirstAppOpen_PlacementID @"b67f4ab43d2fe1"
+#define FirstAppOpen_PlacementID @"b5fa25036683d2"
 
 @interface AdSDKManager : NSObject
 
@@ -32,6 +32,9 @@ typedef void (^AdManagerInitFinishBlock)(void);
 
 /// 初始化SDK
 - (void)initSDK;
+
+/// 66 notifyLoss after each mediation load callback (no setSeatId)
++ (void)notifySDM66LossAfterLoad:(NSString *)placementID;
 
 #pragma mark - 开屏广告相关
 

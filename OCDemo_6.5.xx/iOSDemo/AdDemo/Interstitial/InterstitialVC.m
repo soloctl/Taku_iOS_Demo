@@ -10,7 +10,7 @@
 #import <AnyThinkSDK/AnyThinkSDK.h>
 
 #import "AdLoadConfigTool.h"
-#import "AdLoadConfigTool.h"
+#import "AdSDKManager.h"
 
 //@import AnyThinkInterstitial;
  
@@ -23,7 +23,7 @@
 @implementation InterstitialVC
  
 //广告位ID
-#define InterstitialPlacementID @"b680a1e0ae7a43"
+#define InterstitialPlacementID @"b5fa25016e80bd"
 
 // Custom adapter test ID
 //#define InterstitialPlacementID @"b687f2ede7838d"
@@ -92,6 +92,7 @@
 /// 广告位加载完成
 /// - Parameter placementID: 广告位ID
 - (void)didFinishLoadingADWithPlacementID:(NSString *)placementID {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     BOOL isReady = [[ATAdManager sharedManager] interstitialReadyForPlacementID:placementID];
     [self showLog:[NSString stringWithFormat:@"didFinishLoadingADWithPlacementID:%@ interstitial 是否准备好:%@", placementID,isReady ? @"YES":@"NO"]];
     
@@ -104,6 +105,7 @@
 ///   - placementID: 广告位ID
 ///   - error: 错误信息
 - (void)didFailToLoadADWithPlacementID:(NSString *)placementID error:(NSError *)error {
+    [AdSDKManager notifySDM66LossAfterLoad:placementID];
     ATDemoLog(@"didFailToLoadADWithPlacementID:%@ error:%@", placementID, error);
     [self showLog:[NSString stringWithFormat:@"didFailToLoadADWithPlacementID:%@ errorCode:%ld", placementID, error.code]];
     
