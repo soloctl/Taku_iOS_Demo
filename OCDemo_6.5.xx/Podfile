@@ -3,7 +3,18 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '13.0'
 
+# Adapter 6.5.90.2.1 pins SmartdigimktCNSDK = 6.5.90. After pod install, replace that
+# official binary with the Beilehu custom 6.5.66 package for compatibility testing.
+BEILEHU_SDM = '/Users/taku-0093/Documents/issue/20261028_贝乐虎_66定制包与聚合84兼容性测试/KuYingSDK'
+
 post_install do |installer|
+  require 'fileutils'
+  dest = File.join(__dir__, 'Pods/SmartdigimktCNSDK/KuYingSDK')
+  if File.directory?(BEILEHU_SDM) && File.directory?(File.dirname(dest))
+    FileUtils.rm_rf(dest)
+    FileUtils.cp_r(BEILEHU_SDM, dest)
+    puts "[Beilehu] Replaced Pods/SmartdigimktCNSDK/KuYingSDK with custom 6.5.66"
+  end
   installer.generated_projects.each do |project|
     project.targets.each do |target|
         target.build_configurations.each do |config|
@@ -16,10 +27,10 @@ end
 target 'iOSDemo' do
   use_frameworks!
   
-    #Taku SDK
-    pod 'AnyThinkiOS','6.5.45'
-    #Anythink Kuying Adx SDK(necessary)
-    pod 'AnyThinkMediationAdxSmartdigimktCNAdapter','6.5.46.3'
+    # Taku SDK
+    pod 'AnyThinkiOS','6.5.84'
+    # AnyThink Kuying ADX adapter (pins official SmartdigimktCNSDK = 6.5.90)
+    pod 'AnyThinkMediationAdxSmartdigimktCNAdapter','6.5.90.2.1'
     
     #Baidu--4.80 SDK,podfile文件顶部增加 source 'https://github.com/CocoaPods/Specs.git'
     pod 'AnyThinkMediationBaiduAdapter','10.022.0'

@@ -14,6 +14,7 @@
 @property (strong, nonatomic) UIImageView * bgImgView;
 @property (strong, nonatomic) UILabel * titleLbl;
 @property (strong, nonatomic) UILabel * versionLbl;
+@property (strong, nonatomic) UILabel * sdmVersionLbl;
 @property (strong, nonatomic) UILabel * idfaLbl;
 
 @property (strong, nonatomic) UIImageView * logoImgView;
